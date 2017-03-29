@@ -1,0 +1,12 @@
+{{> imports}}
+{{> header}}
+{{#if mixins}}
+    export default class {{camelize namespace}}{{camelize class}} extends {{#each mixins}}{{camelize this}}({{#if @last}}{{camelize
+        ../../base}}{{/if}}{{/each}}{{#each mixins}}){{/each}}
+{{else}}
+    export default class {{camelize namespace}}{{camelize class}}{{#if base}} extends {{camelize base}}{{/if}}
+{{/if}}
+{
+{{> properties-es7}}
+{{> methods-es7}}
+};

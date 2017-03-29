@@ -1,0 +1,3 @@
+{{#each-concat base mixins requires}}
+    const {{camelize this}} = require('{{relative-path ../namespace this}}');
+{{/each-concat}}

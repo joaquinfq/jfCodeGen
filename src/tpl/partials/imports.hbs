@@ -1,0 +1,3 @@
+{{#each-concat base mixins requires}}
+    import {{camelize this}} from '{{relative-path ../namespace this}}';
+{{/each-concat}}

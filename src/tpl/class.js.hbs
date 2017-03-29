@@ -1,0 +1,9 @@
+{{> header}}
+{{namespace}}.{{class}} = {{base}}.{{method}}(
+{{#each mixins}}
+    {{this}},
+{{/each}}
+{
+{{> properties}}
+{{> methods}}
+});
