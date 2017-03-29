@@ -1,22 +1,24 @@
 {{#each properties}}
-    /**
-    {{#if override}}
-        * @inheritDoc
-    {{else}}
-        {{#each desc}}
-            {{#if this}}
-                * {{{this}}}
-            {{else}}
-                *
-            {{/if}}
-        {{/each}}
-        ** @property {{name}}
-        * @type     {{type}}
-        {{#if readonly}}
-            * @readOnly
-        {{/if}}
-    {{/if}}
-    */'{{name}}' : {{{indent this 8}}},
+        /**
+{{#if override}}
+         * @inheritDoc
+{{else}}
+{{#each desc}}
+{{#if this}}
+         * {{{this}}}
+{{else}}
+         *
+{{/if}}
+{{/each}}
+         *
+         * @property {{name}}
+         * @type     {{type}}
+{{#if readonly}}
+         * @readOnly
+{{/if}}
+{{/if}}
+         */
+        '{{name}}' : {{{indent this 8}}},
 {{/each}}
 {{>computed}}
 {{>observers}}

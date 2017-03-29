@@ -1,36 +1,41 @@
 {{#each methods}}
-    /**
-    {{#if override}}
-        * @inheritDoc
-    {{else}}
-        {{#each desc}}
-            * {{{this}}}
-        {{/each}}
-        ** @method {{name}}
-        {{#if params}}
-            *
-            {{#each params}}
-                * @param {{jsdoc}} {{type}} {{{desc}}}
-            {{/each}}
-        {{/if}}
-        {{#if returns}}
-            ** @returns {{returns}}
-        {{/if}}
-        {{#if scope}}
-            ** @{{scope}}
-        {{/if}}
-    {{/if}}
-    */'{{name}}' : function ({{#each params}}{{name}}{{#if @last}}{{else}}, {{/if}}{{/each}}){
-    {{#if before}}
-        this._super({{#each params}}{{name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
-    {{/if}}
-    {{{body}}}
-    {{#if after}}
-        {{#if returns}}
-            return this._super({{#each params}}{{name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
-        {{else}}
+        /**
+{{#if override}}
+         * @inheritDoc
+{{else}}
+{{#each desc}}
+         * {{{this}}}
+{{/each}}
+         *
+         * @method {{name}}
+{{#if params}}
+         *
+{{#each params}}
+         * @param {{jsdoc}} {{type}} {{{desc}}}
+{{/each}}
+{{/if}}
+{{#if returns}}
+         *
+         * @returns {{returns}}
+{{/if}}
+{{#if scope}}
+         *
+         * @{{scope}}
+{{/if}}
+{{/if}}
+         */
+        '{{name}}' : function ({{#each params}}{{name}}{{#if @last}}{{else}}, {{/if}}{{/each}})
+        {
+{{#if before}}
             this._super({{#each params}}{{name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
-        {{/if}}
+{{/if}}
+            {{{body}}}
+{{#if after}}
+    {{#if returns}}
+        return this._super({{#each params}}{{name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
+    {{else}}
+            this._super({{#each params}}{{name}}{{#if @last}}{{else}}, {{/if}}{{/each}});
     {{/if}}
-    },
+{{/if}}
+        },
 {{/each}}
