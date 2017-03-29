@@ -1,6 +1,7 @@
 {
-    "version": "0.1.1",
+    "version": "0.1.2",
     "author": "Joaquín Fernández",
+    "name": "jf-code-gen",
     "description": "Code generator using templates for any programming language or framework.",
     "bugs": {
         "url": "https://github.com/joaquinfq/jfCodeGen"
@@ -14,7 +15,6 @@
         "templates"
     ],
     "license": "MIT",
-    "name": "jfCodeGen",
     "homepage": "http://www.joaquinfernandez.net",
     "repository": {
         "type": "git",
