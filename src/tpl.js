@@ -1,32 +1,15 @@
-const Base = require('./base');
-const fs   = require('jf-file-system').i();
-const hbs  = require('handlebars');
-const path = require('path');
+const jfCodeGenBase = require('./base');
+const fs            = require('jf-file-system').i();
+const hbs           = require('handlebars');
+const path          = require('path');
 /**
  * Maneja lo relacionado con la plantilla y la presentación del resultado.
  *
- * @page templates Plantillas
- *
- * Para generar el código se hace uso de plantillas en formato <em>hbs</em> que luego son
- * renderizadas usando el módulo <em>handlebars</em>.
- *
- * Esto permitiría poder cambiar de versión (p.e., ES5 --> ES6) o de lenguaje (p.e., Javascript --> Java)
- * y reaprovechar la funcionalidad que se tiene.
- *
- * Las subplantillas se usan para renderizar las secciones que tienen el mismo nombre que
- * la plantilla y son incluidas dentro de las plantillas principales que son 2.
- *
- * @section templates-simple simple.hbs
- *
- * Principalmente se usa para generar los modelos sencillos tales como entidades o servicios donde no
- * se hace uso de la sección <em>types</em> en el archivo de configuración.
- *
- * @section templates-types types.hbs
- *
- * Se usa para renderizar los modelos que tienen la sección <em>types</em> los cuales dependen
- * de la propiedad <em>typeCode</em> de los modelos para generar su resultado.
+ * @namespace jf.codegen
+ * @class     jf.codegen.Tpl
+ * @extends   jf.codegen.Base
  */
-module.exports = class Tpl extends Base {
+module.exports = class jfCodeGenTpl extends jfCodeGenBase {
     constructor(config)
     {
         super();
