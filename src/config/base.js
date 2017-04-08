@@ -89,34 +89,6 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase {
     }
 
     /**
-     * Construye el contexto a usar con la plantilla que generará el código resultante.
-     *
-     * @method _buildContext
-     *
-     * @protected
-     */
-    _buildContext()
-    {
-        const _context = {};
-        for (let _property of Object.keys(this))
-        {
-            if (_property[0] !== '_')
-            {
-                let _value = this[_property];
-                if (_value && typeof _value.getContext === 'function')
-                {
-                    _value = _value.getContext();
-                }
-                if (_value && (!Array.isArray(_value) || _value.length))
-                {
-                    _context[_property] = _value;
-                }
-            }
-        }
-        return _context;
-    }
-
-    /**
      * Realiza un volcado del elemento.
      *
      * @method dump
@@ -124,11 +96,6 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase {
     dump()
     {
         console.debug(JSON.stringify(this, null, 4));
-    }
-
-    toJSON()
-    {
-        return this._buildContext();
     }
 
     /**

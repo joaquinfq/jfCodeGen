@@ -19,7 +19,93 @@ module.exports = class jfCodeGenSectionTags extends jfCodeGenSectionBase {
     /**
      * @override
      */
-    getContext()
+    _getDefault()
+    {
+        return {};
+    }
+
+    /**
+     * Callback a ejecutar en el evento `before-context` de `file`.
+     *
+     * @param {jf.codegen.config.File} file Clase que ha disparado el evento.
+     *
+     * @private
+     */
+    __onBeforeContext(file)
+    {
+        const _map       = {
+            base   : 'extends',
+            mixins : 'uses'
+        };
+        let _class       = file.class;
+        const _namespace = file.namespace;
+        if (_namespace)
+        {
+            _class = `${_namespace}.${_class}`;
+        }
+        this.setItem('namespace', _namespace);
+        this.setItem('class', _class);
+        ['base', 'requires', 'version'/*, 'created'*/].forEach(
+            name =>
+            {
+                const _value = file[name];
+                if (_value && (!Array.isArray(_value) || _value.length))
+                {
+                    if (name in _map)
+                    {
+                        name = _map[name];
+                    }
+                    this.setItem(
+                        name,
+                        _value instanceof jfCodeGenSectionBase
+                            ? _value.toJSON()
+                            : _value
+                    );
+                }
+            }
+        )
+    }
+
+    /**
+     * @override
+     */
+    setItem(name, value)
+    {
+        if (value)
+        {
+            if (Array.isArray(value))
+            {
+                value.forEach(text => this.setItem(name, text));
+            }
+            else if (typeof value === 'string')
+            {
+                const _config = this.config;
+                const _values = _config[name];
+                if (Array.isArray(_values))
+                {
+                    if (_values.indexOf(value) === -1)
+                    {
+                        _values.push(value);
+                    }
+                }
+                else
+                {
+                    _config[name] = [
+                        value
+                    ];
+                }
+            }
+            else
+            {
+                this.error('Valor incorrecto para el tag %s: %s', '@' + name, typeof value);
+            }
+        }
+    }
+
+    /**
+     * @override
+     */
+    toJSON()
     {
         const _tags   = [];
         const _config = this.config;
@@ -75,92 +161,6 @@ module.exports = class jfCodeGenSectionTags extends jfCodeGenSectionBase {
             }
         }
         return _tags;
-    }
-
-    /**
-     * @override
-     */
-    _getDefault()
-    {
-        return {};
-    }
-
-    /**
-     * Callback a ejecutar en el evento `before-context` de `file`.
-     *
-     * @param {jf.codegen.config.File} file Clase que ha disparado el evento.
-     *
-     * @private
-     */
-    __onBeforeContext(file)
-    {
-        const _map       = {
-            base   : 'extends',
-            mixins : 'uses'
-        };
-        let _class       = file.class;
-        const _namespace = file.namespace;
-        if (_namespace)
-        {
-            _class = `${_namespace}.${_class}`;
-        }
-        this.setItem('namespace', _namespace);
-        this.setItem('class', _class);
-        ['base', 'requires', 'version'/*, 'created'*/].forEach(
-            name =>
-            {
-                const _value = file[name];
-                if (_value && (!Array.isArray(_value) || _value.length))
-                {
-                    if (name in _map)
-                    {
-                        name = _map[name];
-                    }
-                    this.setItem(
-                        name,
-                        _value instanceof jfCodeGenSectionBase
-                            ? _value.getContext()
-                            : _value
-                    );
-                }
-            }
-        )
-    }
-
-    /**
-     * @override
-     */
-    setItem(name, value)
-    {
-        if (value)
-        {
-            if (Array.isArray(value))
-            {
-                value.forEach(text => this.setItem(name, text));
-            }
-            else if (typeof value === 'string')
-            {
-                const _config = this.config;
-                const _values = _config[name];
-                if (Array.isArray(_values))
-                {
-                    if (_values.indexOf(value) === -1)
-                    {
-                        _values.push(value);
-                    }
-                }
-                else
-                {
-                    _config[name] = [
-                        value
-                    ];
-                }
-            }
-            else
-            {
-                this.error('Valor incorrecto para el tag %s: %s', '@' + name, typeof value);
-            }
-        }
     }
 
     /**

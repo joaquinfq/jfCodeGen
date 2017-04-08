@@ -19,31 +19,6 @@ module.exports = class jfCodeGenSectionRequires extends jfCodeGenSectionBase {
     /**
      * @override
      */
-    getContext()
-    {
-        let _requires = this.config;
-        if (_requires && _requires.length)
-        {
-            const _file  = this.file;
-            _requires    = _requires
-                .filter(
-                    (require, index, requires) => requires.indexOf(require) === index
-                );
-            _requires    = _requires.sort(
-                (value1, value2) => value1.toLowerCase().localeCompare(value2.toLowerCase())
-            );
-            const _index = _requires.indexOf(_file.base);
-            if (_index !== -1)
-            {
-                _requires.splice(_index, 1);
-            }
-        }
-        return _requires;
-    }
-
-    /**
-     * @override
-     */
     _getDefault()
     {
         return [];
@@ -72,5 +47,30 @@ module.exports = class jfCodeGenSectionRequires extends jfCodeGenSectionBase {
                 } while (_index--);
             }
         }
+    }
+
+    /**
+     * @override
+     */
+    toJSON()
+    {
+        let _requires = this.config;
+        if (_requires && _requires.length)
+        {
+            const _file  = this.file;
+            _requires    = _requires
+                .filter(
+                    (require, index, requires) => requires.indexOf(require) === index
+                );
+            _requires    = _requires.sort(
+                (value1, value2) => value1.toLowerCase().localeCompare(value2.toLowerCase())
+            );
+            const _index = _requires.indexOf(_file.base);
+            if (_index !== -1)
+            {
+                _requires.splice(_index, 1);
+            }
+        }
+        return _requires;
     }
 };

@@ -106,59 +106,6 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
     }
 
     /**
-     * Devuelve el contexto a usar con la plantilla para convertir la sección en código.
-     * Por defecto, se convierte en array el objeto de configuración y se ordena según sus claves.
-     */
-    getContext()
-    {
-        const _config = this.config;
-        let _context  = _config;
-        if (_config && typeof _config === 'object' && !Array.isArray(_config))
-        {
-            const _names = Object.keys(_config);
-            if (_names.length)
-            {
-                const _sorted = [];
-                _names
-                    .sort(
-                        (name1, name2) =>
-                        {
-                            return name1.replace(/^_+/, '')
-                                .toLowerCase()
-                                .localeCompare(
-                                    name2.replace(/^_+/, '').toLowerCase()
-                                );
-                        }
-                    )
-                    .forEach(
-                        (name) =>
-                        {
-                            if (_config[name])
-                            {
-                                // Agregamos una copia del valor.
-                                _sorted.push(
-                                    JSON.parse(
-                                        JSON.stringify(_config[name])
-                                    )
-                                );
-                            }
-                            else
-                            {
-                                this.log('warn', '%s::getContext -- %s', this.name, name);
-                            }
-                        }
-                    );
-                _context = _sorted;
-            }
-            else
-            {
-                _context = false;
-            }
-        }
-        return _context;
-    }
-
-    /**
      * Devuelve el valor por defecto a asignar a la sección
      * si no se especifica en la configuración.
      *
@@ -197,7 +144,7 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
             {
                 _items = Object.keys(_items).sort();
             }
-            _items.forEach(this._parseItem.bind(this));
+            _items.forEach((item, index) => this._parseItem(item, index));
         }
     }
 
@@ -258,7 +205,51 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
      */
     toJSON()
     {
-        return this.getContext();
+        const _config = this.config;
+        let _context  = _config;
+        if (_config && typeof _config === 'object' && !Array.isArray(_config))
+        {
+            const _names = Object.keys(_config);
+            if (_names.length)
+            {
+                const _sorted = [];
+                _names
+                    .sort(
+                        (name1, name2) =>
+                        {
+                            return name1.replace(/^_+/, '')
+                                .toLowerCase()
+                                .localeCompare(
+                                    name2.replace(/^_+/, '').toLowerCase()
+                                );
+                        }
+                    )
+                    .forEach(
+                        (name) =>
+                        {
+                            if (_config[name])
+                            {
+                                // Agregamos una copia del valor.
+                                _sorted.push(
+                                    JSON.parse(
+                                        JSON.stringify(_config[name])
+                                    )
+                                );
+                            }
+                            else
+                            {
+                                this.log('warn', '%s::toJSON -- %s', this.name, name);
+                            }
+                        }
+                    );
+                _context = _sorted;
+            }
+            else
+            {
+                _context = false;
+            }
+        }
+        return _context;
     }
 
     /**

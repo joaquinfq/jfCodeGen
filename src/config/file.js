@@ -180,8 +180,9 @@ class jfCodeGenConfigFile extends jfCodeGenConfigBase {
             }
         }
         this.emit('before-context', this);
-        const _context = this._buildContext();
-        const _tpl     = new jfCodeGenTpl(this);
+        const _context = this.toJSON();
+        this.emit('after-context', this, _context);
+        const _tpl = new jfCodeGenTpl(this);
         this.emit('before-render', this, _tpl);
         const _code = _tpl.render(_context);
         this.emit('after-render', this, _tpl, _code);
