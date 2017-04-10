@@ -7,13 +7,15 @@
   {{/if}}
   {{#if override}}
      * {{{tr "Método heredado de `%s`." @root/base}}}
+     *
+     * @override
   {{/if}}
      *
      * @method {{name}}
   {{#if params}}
      *
     {{#each params}}
-     * @param {{doc-type type}} {{name}} {{{desc}}}
+     * @param {{doc-type typePad}} {{namePad}} {{{desc}}}
     {{/each}}
   {{/if}}
   {{#if returns}}

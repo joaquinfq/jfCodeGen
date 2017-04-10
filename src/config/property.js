@@ -12,6 +12,16 @@ module.exports = class jfCodeGenConfigProperty extends jfCodeGenConfigBase {
      */
     constructor(config)
     {
+        if (typeof config === 'string')
+        {
+            const _def = jfCodeGenConfigBase.parseDefinition(config);
+            config     = {
+                desc     : _def[0],
+                type     : _def[1],
+                value    : _def[2],
+                readonly : _def[3] === 'true'
+            }
+        }
         super(config);
         /**
          * Valor por defecto.

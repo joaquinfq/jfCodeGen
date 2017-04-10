@@ -51,7 +51,7 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase {
             if (Array.isArray(config.desc))
             {
                 config.desc = config.desc
-                    .map(i => i.trim().replace("\\'", "'"))
+                    .map(i => i.trim())
                     .filter((d, i, a) => !!d && a.indexOf(d) === i);
             }
             if ((!config.desc || !config.desc.length) && !config.override)
@@ -110,11 +110,7 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase {
         let _isValid = true;
         if (!Array.isArray(this.desc))
         {
-            this.error(
-                'La descripción debe %s debe ser un array en vez de %s.',
-                this.name,
-                typeof this.desc
-            );
+            this.error('La descripción debe %s debe ser un array en vez de %s.', this.name, typeof this.desc);
             _isValid = false;
         }
         else if (this.desc.join('\n').length < this.minDescLength)
@@ -123,6 +119,52 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase {
             _isValid = false;
         }
         return _isValid;
+    }
+
+    /**
+     * Analiza una definición de tipo texto.
+     * El texto entre paréntesis se usa para definir campos separados
+     * entre sí usando `;` por defecto.
+     *
+     * ```
+     * console.log(
+     *     jfCodeGen.config.Base.parseDefinition('Esta es la descripción (val1;val2;val3;;val4)')
+     * ); // [ 'Esta es la descripción', val1, val2, val3, '', val4 ]
+     * ```
+     *
+     * @param {String} definition Definición a analizar.
+     * @param {String} separator  Separador usado entre campos.
+     * @return {String[]}
+     */
+    static parseDefinition(definition, separator = ';')
+    {
+        const _first = definition.lastIndexOf('(');
+        let _result;
+        if (_first === -1)
+        {
+            _result = [definition];
+        }
+        else
+        {
+            const _last = definition.lastIndexOf(')');
+            if (_last === -1)
+            {
+                jfCodeGenBase.i().error('Falta el `)` de cierre en la definición: %s', definition);
+            }
+            else
+            {
+                let _desc = definition.substring(0, _first).trim();
+                if (_desc[_desc.length - 1] !== '.')
+                {
+                    _desc += '.';
+                }
+                _result = [
+                    _desc,
+                    ...definition.substring(_first + 1, _last).split(separator)
+                ];
+            }
+        }
+        return _result;
     }
 
     /**

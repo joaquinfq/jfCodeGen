@@ -10,7 +10,7 @@ const camelize = require('./camelize');
  */
 module.exports = function (type)
 {
-    if (type[0] !== '{')
+    if (type && type[0] !== '{')
     {
         let _type     = type
             .split('|')

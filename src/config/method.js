@@ -157,23 +157,35 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
             const _types = [];
             for (let _param of _params)
             {
+                if (typeof _param === 'string')
+                {
+                    const _def = jfCodeGenConfigBase.parseDefinition(_param);
+                    _param     = {
+                        desc   : _def[0],
+                        type   : _def[1],
+                        defval : _def[2],
+                        name   : _def[3]
+                    };
+                }
                 _param = new jfCodeGenConfigProperty(_param);
                 _names.push(_param.name);
                 _types.push(_param.type);
                 _newParams.push(_param.toJSON());
             }
-            if (_params.length > 1)
-            {
-                const _max = {
-                    name : Math.max(..._names.map(name => name.length)),
-                    type : Math.max(..._types.map(name => name.length))
-                };
-                _newParams.forEach(
-                    param => ['name', 'type'].forEach(
-                        prop => param[prop] += ' '.repeat(_max[prop] - param[prop].length)
-                    )
-                );
-            }
+            const _max = {
+                name : Math.max(..._names.map(name => name.length)),
+                type : Math.max(..._types.map(name => name.length))
+            };
+            _newParams.forEach(
+                param => ['name', 'type'].forEach(
+                    prop =>
+                    {
+                        const _name         = param[prop];
+                        param[prop + 'Pad'] = _name + ' '.repeat(_max[prop] - _name.length)
+                    }
+                )
+            );
+
         }
         this.params = _newParams;
     }
