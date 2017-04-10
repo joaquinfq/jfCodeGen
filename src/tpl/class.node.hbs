@@ -2,6 +2,7 @@
 {{> header}}
 module.exports = class {{camelize namespace}}{{camelize class}}{{#if base}} extends {{camelize base}}{{/if}}
 {
+{{#if properties}}
     /**
      * @constructor
      */
@@ -12,5 +13,6 @@ module.exports = class {{camelize namespace}}{{camelize class}}{{#if base}} exte
 {{/if}}
 {{> properties-es6}}
     }
+{{/if}}
 {{> methods-es7}}
 };

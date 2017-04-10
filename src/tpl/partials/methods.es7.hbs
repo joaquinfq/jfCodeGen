@@ -4,11 +4,11 @@
     {{#each desc}}
      * {{{tr this}}}
     {{/each}}
-    {{#if override}}
-     * {{{tr "Método heredado de `%s`." @root/base}}}
-    {{/if}}
-     *
   {{/if}}
+  {{#if override}}
+     * {{{tr "Método heredado de `%s`." @root/base}}}
+  {{/if}}
+     *
      * @method {{name}}
   {{#if params}}
      *

@@ -54,9 +54,9 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase {
                     .map(i => i.trim().replace("\\'", "'"))
                     .filter((d, i, a) => !!d && a.indexOf(d) === i);
             }
-            if (!config.desc || !config.desc.length)
+            if ((!config.desc || !config.desc.length) && !config.override)
             {
-                config.desc = ['No description'];
+                config.desc = ['Sin descripción'];
             }
             this.setProperties(config);
         }
@@ -123,5 +123,56 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase {
             _isValid = false;
         }
         return _isValid;
+    }
+
+    /**
+     * Devuelve el tipo de datos correcto para el lenguaje a usar.
+     *
+     * @param {String} type Tipo de datos a analizar.
+     *
+     * @return {String} Tipo de datos convertido.
+     */
+    static getType(type)
+    {
+        if (type && type.indexOf('.') === -1)
+        {
+            type = type.toLowerCase();
+            switch (type)
+            {
+                case 'bit':
+                case 'bool':
+                case 'boolean':
+                    type = 'Boolean';
+                    break;
+                case 'decimal':
+                case 'double':
+                case 'float':
+                case 'integer':
+                case 'number':
+                case 'real':
+                    type = 'Number';
+                    break;
+                default:
+                    type = type[0].toUpperCase() + type.substr(1);
+            }
+        }
+        return type;
+    }
+
+    /**
+     * Convierte un objeto a texto formateado e indentado.
+     *
+     * @param {Object} value Objeto a formatear.
+     * @param {Number} size  Cantidad de espacios en blanco a agregar al inicio
+     *                       de cada línea para indentar las claves.
+     *
+     * @return {String} Texto formateado e indentado.
+     */
+    static stringify(value, size = 8)
+    {
+        return JSON.stringify(value, null, 4)
+            .replace(/"/gm, "'")
+            .replace(/^/gm, ' '.repeat(size))
+            .trim();
     }
 };

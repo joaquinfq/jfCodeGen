@@ -11,18 +11,15 @@ const translations = require('../../base').translations;
 module.exports = function (text/*, arg1, arg2, ...,*/, opts)
 {
     const _args = [];
-    if (typeof text === 'string' && text.indexOf('%') !== -1)
+    for (let _i = 1, _l = arguments.length - 1; _i < _l; ++_i)
     {
-        for (let _i = 1, _l = arguments.length - 1; _i < _l; ++_i)
+        let _arg = '' + arguments[_i];
+        // Evitamos que aparezcan textos como null, undefined, etc.
+        if (_arg === 'false' || _arg === 'null' || _arg === 'undefined')
         {
-            let _arg = '' + arguments[_i];
-            // Evitamos que aparezcan textos como null, undefined, etc.
-            if (_arg === 'false' || _arg === 'null' || _arg === 'undefined')
-            {
-                _arg = '';
-            }
-            _args.push(_arg);
+            _arg = '';
         }
+        _args.push(_arg);
     }
-    return translations.tr(text, _args);
+    return translations.tr(text, ..._args);
 };

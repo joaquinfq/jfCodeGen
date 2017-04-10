@@ -17,11 +17,16 @@ module.exports = function (type)
             .map(
                 text =>
                 {
-                    const _text   = text.trim();
-                    const _global = camelize(_text, {capitalize : true});
-                    return _global in global
-                        ? _global
-                        : _text;
+                    let _text = text.trim();
+                    if (_text.indexOf('.') === -1)
+                    {
+                        const _global = camelize(_text, {capitalize : true});
+                        if (_global in global)
+                        {
+                            _text = _global;
+                        }
+                    }
+                    return _text;
                 }
             )
             .join('|');

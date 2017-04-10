@@ -59,6 +59,7 @@ module.exports = class jfCodeGenConfigProperty extends jfCodeGenConfigBase {
         this.value = "null";
         //---------------------------------------------------------------------
         this.setProperties(config);
+        this.type = this.constructor.getType(this.type);
     }
 
     /**

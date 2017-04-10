@@ -1,44 +1,41 @@
-const jfCodeGenConfigBase = require('./base');
-const jfCodeGenProperty   = require('./property');
-const beautify            = require('js-beautify').js_beautify;
-const docType             = require('../tpl/helpers/doc-type');
-const jshint              = require('jshint').JSHINT;
+const beautify                = require('js-beautify').js_beautify;
+const docType                 = require('../tpl/helpers/doc-type');
+const eslint                  = require('eslint/lib/eslint');
+const jfCodeGenConfigBase     = require('./base');
+const jfCodeGenConfigProperty = require('./property');
+const path                    = require('path');
+const eslintConfig            = new (require('eslint/lib/config'))(
+    {
+        useEslintrc : false,
+        baseConfig  : path.resolve(__dirname, '..', '..', '.eslintrc.yml')
+    }
+);
 /**
- * Configuración predefinida para el embellecedor del código y el validador.
+ * Configuración predefinida para el embellecedor del código.
  *
  * @type {Object}
  */
-const defaultConfig       = {
-    beautify : {
-        'brace_style'                 : 'expand,preserve-inline',
-        'break_chained_methods'       : true,
-        'end_with_newline'            : false,
-        'eol'                         : '\n',
-        'eval_code'                   : false,
-        'indent_char'                 : ' ',
-        'indent_level'                : 4,
-        'indent_size'                 : 4,
-        'indent_with_tabs'            : false,
-        'jslint_happy'                : false,
-        'keep_array_indentation'      : true,
-        'keep_function_indentation'   : true,
-        'max_preserve_newlines'       : 1,
-        'preserve_newlines'           : false,
-        'space_after_anon_function'   : true,
-        'space_before_conditional'    : true,
-        'unescape_strings'            : true,
-        'wrap_attributes'             : 'force-aligned',
-        'wrap_attributes_indent_size' : 4,
-        'wrap_line_length'            : 120
-    },
-    jshint   : JSON.parse(
-        require('jf-file-system').i().read(
-            __dirname,
-            '..',
-            '..',
-            '.jshintrc'
-        )
-    )
+const beautifyConfig          = {
+    'brace_style'                 : 'expand,preserve-inline',
+    'break_chained_methods'       : true,
+    'end_with_newline'            : false,
+    'eol'                         : '\n',
+    'eval_code'                   : false,
+    'indent_char'                 : ' ',
+    'indent_level'                : 4,
+    'indent_size'                 : 4,
+    'indent_with_tabs'            : false,
+    'jslint_happy'                : false,
+    'keep_array_indentation'      : true,
+    'keep_function_indentation'   : true,
+    'max_preserve_newlines'       : 1,
+    'preserve_newlines'           : false,
+    'space_after_anon_function'   : true,
+    'space_before_conditional'    : true,
+    'unescape_strings'            : true,
+    'wrap_attributes'             : 'force-aligned',
+    'wrap_attributes_indent_size' : 4,
+    'wrap_line_length'            : 120
 };
 /**
  * Representa la configuración de un método de una clase.
@@ -59,12 +56,22 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
          */
         this.body = '';
         /**
+         * Si es `false` el código no será analizado por el módulo `eslint` en busca de errores.
+         * También puede especificarse un objeto para modificar algún parámetro de la
+         * configuración de `eslint`.
+         * Debería evitarse el uso de esta opción a `false`.
+         *
+         * @property eslint
+         * @type     {Boolean|Object}
+         */
+        this.eslint = {};
+        /**
          * Indica si debe embellecerse el código generado.
          *
          * @property format
          * @type     {Boolean}
          */
-        this.format = true;
+        this.format = false;
         /**
          * Cadena usada para indentar el código.
          *
@@ -72,16 +79,6 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
          * @type     {String}
          */
         this.indent = '        ';
-        /**
-         * Si es `false` el código no será analizado por el módulo `jshint` en busca de errores.
-         * También puede especificarse un objeto para modificar algún parámetro de la
-         * configuración de `jshint`.
-         * Debería evitarse el uso de esta opción a `false`.
-         *
-         * @property jshint
-         * @type     {Boolean|Object}
-         */
-        this.jshint = {};
         /**
          * Se usa para indicar que el método está sobrescribiendo un método de la clase padre.
          *
@@ -99,10 +96,10 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
         /**
          * Especifica el tipo de datos devuelto por el método.
          *
-         * @property returns;
+         * @property return;
          * @type    {String}
          */
-        this.returns = '';
+        this.return = '';
         /**
          * Indica si el método de la clase padre debe ser llamado `after` o `before`
          * del método del modelo que lo sobrescribe.
@@ -124,24 +121,25 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
      */
     formatCode()
     {
-        const _code = this.body;
-        if (_code)
+        const _code = this.body.replace(/^/gm, this.indent).replace(/[ \t]+$/gm, '').trim();
+        if (this.format)
         {
-            this.body = beautify(_code, defaultConfig.beautify).replace(/^/gm, this.indent).trim();
+            this.body = beautify(_code, beautifyConfig).trim();
         }
-        if (this.returns)
+        if (this.return)
         {
-            let _returns = this.returns.trim();
-            if (_returns[0] === '(')
+            let _return = this.return.trim();
+            if (_return[0] === '(')
             {
-                _returns = _returns.replace('(', '{').replace(')', '}');
+                _return = _return.replace('(', '{').replace(')', '}');
             }
-            else if (_returns[0] !== '{')
+            else if (_return[0] !== '{')
             {
-                _returns = docType(_returns);
+                _return = docType(_return);
             }
-            this.returns = _returns;
+            this.return = _return;
         }
+        this.body = _code;
     }
 
     /**
@@ -162,7 +160,7 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
                 _param = new jfCodeGenConfigProperty(_param);
                 _names.push(_param.name);
                 _types.push(_param.type);
-                _newParams.push(_param);
+                _newParams.push(_param.toJSON());
             }
             if (_params.length > 1)
             {
@@ -171,12 +169,9 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
                     type : Math.max(..._types.map(name => name.length))
                 };
                 _newParams.forEach(
-                    (param) =>
-                    {
-                        ['name', 'type'].forEach(
-                            prop => param[prop] += ' '.repeat(_max[prop] - param[prop].length)
-                        );
-                    }
+                    param => ['name', 'type'].forEach(
+                        prop => param[prop] += ' '.repeat(_max[prop] - param[prop].length)
+                    )
                 );
             }
         }
@@ -188,47 +183,76 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
      */
     validate()
     {
-        const _code  = this.body;
-        let _isValid = false;
-        if (this.jshint === false)
+        const _code   = this.body;
+        const _eslint = this.eslint;
+        let _isValid  = false;
+        if (_eslint === false)
         {
             _isValid = true;
         }
-        else
+        else if (_code)
         {
             const _params = this.params;
-            const _predef = this.jshint || {};
+            const _names  = [];
             if (_params && _params.length)
             {
-                _params.forEach(
-                    param => _predef[param.name] = true
-                );
+                _params.forEach(param => _names.push(param.name.trim()));
             }
-            _isValid = jshint(_code, defaultConfig.jshint, _predef);
-            if (!_isValid)
+            const _globals = _eslint.globals
+                ? `/*global ${_eslint.globals.join(' ')}*/`
+                : '';
+            const _wrapped = `
+${_globals}
+(function(${_names.join(', ')})
+{
+    ${_code.replace(/^    /gm, '').replace(/[ \t]+$/gm, '')}
+}
+)();
+`;
+            const _config  = eslintConfig.getConfig();
+            if (_config.rules)
             {
-                const _error = jshint.errors[0];
-                this.log(
-                    'error',
-                    '%s\n%s^ %s',
-                    _code.split('\n')[_error.line - 1],
-                    ' '.repeat(_error.character - 1),
-                    _error.reason
+                Object.assign(_config.rules, _eslint.rules);
+            }
+            const _errors = eslint.verify(_wrapped, _config);
+            if (_errors.length)
+            {
+                const _lines = _wrapped.split('\n');
+                _errors.forEach(
+                    error => this.log(
+                        'error',
+                        '',
+                        'ESLINT %s\n%s\n%s^ %s (%s:%s)',
+                        error.ruleId,
+                        _lines[error.line - 1],
+                        ' '.repeat(error.column - 1),
+                        error.message,
+                        error.line,
+                        error.column
+                    )
                 );
                 // @TODO: Pluralizar la etiqueta.
                 this.error(
-                    'JSHINT: Se ha(n) encontrado %s error(es) en el método %s',
-                    jshint.errors.length,
+                    'ESLINT: Se ha(n) encontrado %s error(es) en el método %s',
+                    _errors.length,
                     this.name
                 );
             }
+            else
+            {
+                _isValid = true;
+            }
+        }
+        else
+        {
+            _isValid = true;
         }
         if (_isValid)
         {
-            if (_code.match(/[\W\D']?return[\W\D']/) && !this.override && this.returns === '')
+            if (_code.match(/[\W\D']?return[\W\D']/) && !this.override && this.return === '')
             {
                 this.error(
-                    'El método %s tiene `return` pero la clave `returns` no se ha encontrado en la configuración.',
+                    'El método %s tiene `return` pero la clave `return` no se ha encontrado en la configuración.',
                     this.name
                 );
             }

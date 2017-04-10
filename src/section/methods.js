@@ -12,13 +12,15 @@ const indent               = require('../tpl/helpers/indent');
  */
 module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase {
     /**
-     * @override
-     * /
-     constructor(file, config)
+     * Agrega un método a la configuración de métodos.
+     *
+     * @param {Object} config Configuración del método a agregar.
+     */
+     addMethod(config)
      {
-         super(file, config);
-         file.on('before-render', () => this.__checkBeforeInit());
-     }*/
+         this.setItem(config.name, config);
+     }
+
     /**
      * Agrega el método `toString` a la clase para mostrar su nombre.
      *
@@ -167,6 +169,10 @@ module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase {
      */
     setItem(name, value)
     {
+        if (!value.name)
+        {
+            value.name = name;
+        }
         super.setItem(name, new jfCodeGenMethod(value));
     }
 
@@ -175,8 +181,8 @@ module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase {
      */
     _validateItem(item)
     {
-        return item.jshint
-            ? item.validate()
-            : true;
+        return item.eslint === false
+            ? true
+            : item.validate();
     }
 };

@@ -29,6 +29,14 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
          */
         this.file = file;
         /**
+         * Cantidad de espacios en blanco a usar para indentar los objetos
+         * usando el método `stringify`.
+         *
+         * @property indentSize
+         * @type     {Number}
+         */
+        this.indentSize = file.tpl.indexOf('.node.') === -1 ? 4 : 8;
+        /**
          * Nombre de la sección.
          * Debe coincidir con el nombre de la clave en el archivo YAML leído.
          * Si no se especifica se construye a partir del nombre del archivo.
@@ -212,37 +220,21 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
             const _names = Object.keys(_config);
             if (_names.length)
             {
-                const _sorted = [];
+                _context = [];
                 _names
                     .sort(
-                        (name1, name2) =>
-                        {
-                            return name1.replace(/^_+/, '')
-                                .toLowerCase()
-                                .localeCompare(
-                                    name2.replace(/^_+/, '').toLowerCase()
-                                );
-                        }
+                        (name1, name2) => name1
+                            .replace(/^_+/, '')
+                            .toLowerCase()
+                            .localeCompare(name2.replace(/^_+/, '').toLowerCase())
                     )
                     .forEach(
-                        (name) =>
-                        {
-                            if (_config[name])
-                            {
-                                // Agregamos una copia del valor.
-                                _sorted.push(
-                                    JSON.parse(
-                                        JSON.stringify(_config[name])
-                                    )
-                                );
-                            }
-                            else
-                            {
-                                this.log('warn', '%s::toJSON -- %s', this.name, name);
-                            }
-                        }
+                        name => _context.push(
+                            JSON.parse(
+                                JSON.stringify(_config[name])
+                            )
+                        )
                     );
-                _context = _sorted;
             }
             else
             {

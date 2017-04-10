@@ -85,7 +85,7 @@ module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase {
                         const _property = _properties[name];
                         if (!_property.readonly)
                         {
-                            let _type = _property.type;
+                            let _type = jfCodeGenProperty.getType(_property.type);
                             if (_type)
                             {
                                 const _isArray = _type.indexOf('[]') !== -1;
@@ -123,11 +123,9 @@ module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase {
                             rawval   : true,
                             override : true,
                             type     : 'object',
-                            value    : JSON.stringify(_result, null, 4)
-                                .replace(/"([^"]+)":/g, "'$1' :")
-                                .replace(/"/g, '')
-                                .replace(/^/gm, '    ')
-                                .trim()
+                            value    : jfCodeGenProperty.stringify(_result, this.indentSize)
+                                .replace(/\'/g, '')
+                                .replace(/:/g, ' :')
                         }
                     );
                 }

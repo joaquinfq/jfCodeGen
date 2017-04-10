@@ -144,9 +144,9 @@ class jfCodeGenConfigFile extends jfCodeGenConfigBase {
             if (typeof config === 'object')
             {
                 this.emit('config', config);
+                this.setProperties(config);
                 // Asignamos las propiedades que corresponden con las secciones.
                 this.__loadSections(config);
-                this.setProperties(config);
                 this.class = this.camelize(this.class);
             }
         }
