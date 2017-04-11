@@ -13,7 +13,7 @@ function formatFile(name)
     return name.split('.').map(s => dasherize(s)).join(path.sep);
 }
 //----------------------------------------------------------------------
-module.exports = function (namespace, filename)
+module.exports = function (namespace, filename, opts)
 {
     if (namespace && filename)
     {
@@ -24,8 +24,28 @@ module.exports = function (namespace, filename)
         }
         else
         {
-            // En caso contrario, se asume como un módulo aparte por lo tanto no pueden empezar con '.'.
-            filename = dasherize(camelize(filename));
+            // En caso contrario, se asume como un módulo aparte por lo tanto no pueden empezar con './'.
+            const _modules = opts.data.root.modules || {};
+            let _filename;
+            for (let _module of Object.keys(_modules))
+            {
+                if (filename.indexOf(_module) === 0)
+                {
+                    const _length = _module.length;
+                    if (filename[_length] === '.')
+                    {
+                        _filename = path.join(
+                            _modules[_module],
+                            filename
+                                .substr(_length + 1)
+                                .split('.')
+                                .map(s => dasherize(s))
+                                .join(path.sep)
+                        );
+                    }
+                }
+            }
+            filename = _filename || dasherize(camelize(filename));
         }
     }
     return filename;

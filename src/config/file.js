@@ -79,6 +79,13 @@ class jfCodeGenConfigFile extends jfCodeGenConfigBase {
          */
         this.method = 'extend';
         /**
+         * Listado de módulos a incluir.
+         *
+         * @property modules
+         * @type     {Object}
+         */
+        this.modules = {};
+        /**
          * Espacio de nombres de la clase generada.
          *
          * @property namespace
@@ -160,14 +167,6 @@ class jfCodeGenConfigFile extends jfCodeGenConfigBase {
      */
     generate(verbose = false)
     {
-        this.log(
-            'debug',
-            '',
-            'Generando archivo %s para la clase %s',
-            path.relative(this.outdir, this.outfile),
-            // this.outfile,
-            `${this.namespace}.${this.class}`
-        );
         // Procesamos las secciones y se disparan los eventos para que cada quien
         // se suscriba al momento que le interese modificar el estado de la aplicación.
         this.__iterate('parse');
@@ -179,11 +178,33 @@ class jfCodeGenConfigFile extends jfCodeGenConfigBase {
         this.emit('before-render', this, _tpl);
         const _code = _tpl.render(_context);
         this.emit('after-render', this, _tpl, _code);
+        // Verificamos si tiene extensión el archivo.
+        let _outfile = this.outfile;
+        if (!path.extname(_outfile))
+        {
+            const _tpl = this.tpl.split('.');
+            if (_tpl[0] === 'class')
+            {
+                switch (_tpl[1])
+                {
+                    case 'es7':
+                        _outfile += '.es7';
+                        break;
+                    case 'js':
+                    case 'node':
+                        _outfile += '.js';
+                        break;
+                    case 'php':
+                        _outfile += '.php';
+                        break;
+                }
+            }
+        }
         if (verbose)
         {
             console.log(_code);
         }
-        this.write(this.outfile, _code);
+        this.write(_outfile, _code);
     }
 
     /**
