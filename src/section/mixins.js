@@ -1,10 +1,77 @@
-const jfCodeGenSectionRequires = require('./requires');
+const jfCodeGenSectionBase = require('./base');
 /**
  * Maneja todo lo relacionado con los mixins a aplicar a una clase.
  *
  * @namespace jf.codegen.section
  * @class     jf.codegen.section.Mixins
- * @extends   jf.codegen.section.Requires
+ * @extends   jf.codegen.section.Base
  */
-module.exports = class jfCodeGenSectionMixins extends jfCodeGenSectionRequires {
+module.exports = class jfCodeGenSectionMixins extends jfCodeGenSectionBase {
+    /**
+     * @override
+     */
+    _getDefault()
+    {
+        return {};
+    }
+
+    /**
+     * @override
+     */
+    _parseItem(item)
+    {
+        if (item.indexOf('.') === -1)
+        {
+            delete this.config[item];
+        }
+        else
+        {
+            const _name = this.getItem(item);
+            if (!_name)
+            {
+                this.setItem(item, this.camelize(item));
+            }
+        }
+    }
+
+    /**
+     * @override
+     */
+    toJSON()
+    {
+        let _requires = this.config;
+        if (_requires && _requires.length)
+        {
+            const _file = this.file;
+            this.dump(_requires);
+            _requires = _requires
+                .sort((r1, r2) => r1.name.toLowerCase().localeCompare(r2.name.toLowerCase()))
+                .map(r => r.class.indexOf(_file.base) === -1);
+        }
+        return _requires;
+    }
+
+    /**
+     * @override
+     */
+    validate()
+    {
+        super.validate();
+        const _requires = this.config;
+        if (_requires)
+        {
+            if (_requires.length)
+            {
+                let _index = _requires.length - 1;
+                do
+                {
+                    const _require = _requires[_index][0];
+                    if (!this._checkFile(_require))
+                    {
+                        _requires.splice(_index, 1);
+                    }
+                } while (_index--);
+            }
+        }
+    }
 };

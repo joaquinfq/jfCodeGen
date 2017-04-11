@@ -20,7 +20,7 @@ module.exports = function (type)
                     let _text = text.trim();
                     if (_text.indexOf('.') === -1)
                     {
-                        const _global = camelize(_text, {capitalize : true});
+                        const _global = camelize(_text);
                         if (_global in global)
                         {
                             _text = _global;

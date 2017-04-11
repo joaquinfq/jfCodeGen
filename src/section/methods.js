@@ -16,10 +16,10 @@ module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase {
      *
      * @param {Object} config Configuración del método a agregar.
      */
-     addMethod(config)
-     {
-         this.setItem(config.name, config);
-     }
+    addMethod(config)
+    {
+        this.setItem(config.name, config);
+    }
 
     /**
      * Agrega el método `toString` a la clase para mostrar su nombre.
@@ -32,8 +32,8 @@ module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase {
         this.setItem(
             'toString',
             {
-                body     : `return '${_file.namespace}.${_file.class}';`,
-                desc     : this.tr('Devuelve una cadena que representa al objeto.').split('\n'),
+                body     : `return '[class ${_file.namespace}.${_file.class}]';`,
+                desc     : this.tr('Devuelve una cadena que representa al objeto.'),
                 override : true,
                 returns  : 'String'
             }
@@ -94,55 +94,6 @@ module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase {
         }
     }
 
-    createBuilder(name, values, description, returns)
-    {
-        const _keys     = {};
-        const _requires = this.file.requires;
-        for (let _key of Object.keys(values).sort())
-        {
-            const _value = values[_key];
-            const _cc    = this.camelize(_value);
-            _requires.setItem(_value);
-            _keys[_key] = [
-                `    case '${_key}':`,
-                `        _model = new ${_cc}();`,
-                `        _model.setProperties(config);`,
-                '        break;'
-            ];
-        }
-        const _body  = [
-            'if (!config || typeof config !== \'object\')',
-            '{',
-            '    config = {};',
-            '}',
-            'let _model = null;',
-            'switch (name)',
-            '{'
-        ];
-        const _names = Object.keys(_keys).sort();
-        for (let _key of _names)
-        {
-            _body.push(..._keys[_key]);
-        }
-        _body.push('}', '', 'return _model;');
-        if (!this.methods)
-        {
-            this.methods = {};
-        }
-        this.methods[name] = {
-            body     : _body.join('\n').replace(/^/gm, '        ').trim(),
-            desc     : description.split('\n'),
-            format   : false,
-            override : true,
-            name     : name,
-            params   : {
-                name   : 'Name of model to build (String)',
-                config : 'Config to apply to new instance (Object?)'
-            },
-            returns  : `{${returns}} Model required.`
-        };
-    }
-
     /**
      * @override
      */
@@ -181,6 +132,8 @@ module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase {
      */
     _validateItem(item)
     {
+        item         = this.getItem(item);
+        item.globals = this.get('file.requires.config');
         return item.eslint === false
             ? true
             : item.validate();

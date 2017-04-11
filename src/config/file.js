@@ -1,3 +1,4 @@
+const dasherize            = require('../tpl/helpers/dasherize');
 const jfCodeGenConfigBase  = require('./base');
 const jfCodeGenSectionBase = require('../section/base');
 const jfCodeGenTpl         = require('../tpl');
@@ -167,18 +168,10 @@ class jfCodeGenConfigFile extends jfCodeGenConfigBase {
             // this.outfile,
             `${this.namespace}.${this.class}`
         );
-        // Disparamos los eventos para que cada quien se suscriba al momento que
-        // le interese modificar el estado de la aplicación.
-        for (let _property of Object.keys(this))
-        {
-            const _section = this[_property];
-            if (_section instanceof jfCodeGenSectionBase)
-            {
-                this.emit('before-parse', this, _section);
-                _section.parse();
-                this.emit('after-parse', this, _section);
-            }
-        }
+        // Procesamos las secciones y se disparan los eventos para que cada quien
+        // se suscriba al momento que le interese modificar el estado de la aplicación.
+        this.__iterate('parse');
+        this.__iterate('validate');
         this.emit('before-context', this);
         const _context = this.toJSON();
         this.emit('after-context', this, _context);
@@ -191,6 +184,28 @@ class jfCodeGenConfigFile extends jfCodeGenConfigBase {
             console.log(_code);
         }
         this.write(this.outfile, _code);
+    }
+
+    /**
+     * Itera sobre las secciones llamando el método especificado.
+     *
+     * @param {String} method Método a ejecutar en cada una de las secciones.
+     *
+     * @private
+     */
+    __iterate(method)
+    {
+        for (let _property of Object.keys(this))
+        {
+            const _section = this[_property];
+            if (_section instanceof jfCodeGenSectionBase)
+            {
+                const _name = dasherize(method);
+                this.emit('before-' + _name, this, _section);
+                _section[method]();
+                this.emit('after-' + _name, this, _section);
+            }
+        }
     }
 
     /**

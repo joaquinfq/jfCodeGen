@@ -10,60 +10,9 @@ module.exports = class jfCodeGenSectionTags extends jfCodeGenSectionBase {
     /**
      * @override
      */
-    constructor(file, config)
-    {
-        super(file, config);
-        file.on('before-context', file => this.__onBeforeContext(file));
-    }
-
-    /**
-     * @override
-     */
     _getDefault()
     {
         return {};
-    }
-
-    /**
-     * Callback a ejecutar en el evento `before-context` de `file`.
-     *
-     * @param {jf.codegen.config.File} file Clase que ha disparado el evento.
-     *
-     * @private
-     */
-    __onBeforeContext(file)
-    {
-        const _map       = {
-            base   : 'extends',
-            mixins : 'uses'
-        };
-        let _class       = file.class;
-        const _namespace = file.namespace;
-        if (_namespace)
-        {
-            _class = `${_namespace}.${_class}`;
-        }
-        this.setItem('namespace', _namespace);
-        this.setItem('class', _class);
-        ['base', 'requires', 'version'/*, 'created'*/].forEach(
-            name =>
-            {
-                const _value = file[name];
-                if (_value && (!Array.isArray(_value) || _value.length))
-                {
-                    if (name in _map)
-                    {
-                        name = _map[name];
-                    }
-                    this.setItem(
-                        name,
-                        _value instanceof jfCodeGenSectionBase
-                            ? _value.toJSON()
-                            : _value
-                    );
-                }
-            }
-        )
     }
 
     /**
@@ -97,7 +46,7 @@ module.exports = class jfCodeGenSectionTags extends jfCodeGenSectionBase {
             }
             else
             {
-                this.error('Valor incorrecto para el tag %s: %s', '@' + name, typeof value);
+                this.error('Valor incorrecto para el tag %s: %s -- %s', '@' + name, typeof value, JSON.stringify(value));
             }
         }
     }
@@ -152,7 +101,7 @@ module.exports = class jfCodeGenSectionTags extends jfCodeGenSectionBase {
                 {
                     _values = [_values];
                 }
-                for (let _value of _values)
+                for (let _value of _values.sort((v1, v2) => v1.toLowerCase().localeCompare(v2.toLowerCase())))
                 {
                     _tags.push(
                         `@${_sname} ${_value}`
@@ -161,6 +110,55 @@ module.exports = class jfCodeGenSectionTags extends jfCodeGenSectionBase {
             }
         }
         return _tags;
+    }
+
+    /**
+     * @override
+     */
+    validate()
+    {
+        const _file      = this.file;
+        const _map       = {
+            base   : 'extends',
+            mixins : 'uses'
+        };
+        let _class       = _file.class;
+        const _namespace = _file.namespace;
+        if (_namespace)
+        {
+            _class = `${_namespace}.${_class}`;
+        }
+        this.setItem('namespace', _namespace);
+        this.setItem('class', _class);
+        ['base', 'requires', 'version'/*, 'created'*/].forEach(
+            name =>
+            {
+                const _value = _file[name];
+                if (_value && (!Array.isArray(_value) || _value.length))
+                {
+                    if (name in _map)
+                    {
+                        name = _map[name];
+                    }
+                    if (_value instanceof jfCodeGenSectionBase)
+                    {
+                        _value.iterate(
+                            item => {
+                                if (name !== 'requires' || item !== _file.base)
+                                {
+                                    this.setItem(name, item)
+                                }
+                            }
+                        );
+                    }
+                    else
+                    {
+                        this.setItem(name, _value);
+                    }
+                }
+            }
+        );
+        super.validate();
     }
 
     /**

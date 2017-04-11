@@ -73,6 +73,13 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
          */
         this.format = false;
         /**
+         * Variables globales a usar cuando se valide el código.
+         *
+         * @property globals
+         * @type     {String[]}
+         */
+        this.globals = [];
+        /**
          * Cadena usada para indentar el código.
          *
          * @property indent
@@ -185,7 +192,6 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
                     }
                 )
             );
-
         }
         this.params = _newParams;
     }
@@ -210,8 +216,9 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
             {
                 _params.forEach(param => _names.push(param.name.trim()));
             }
-            const _globals = _eslint.globals
-                ? `/*global ${_eslint.globals.join(' ')}*/`
+            let _globals   = Object.values(this.globals);
+            _globals       = _globals.length
+                ? `/*global ${_globals.join(' ')}*/`
                 : '';
             const _wrapped = `
 ${_globals}
@@ -221,11 +228,15 @@ ${_globals}
 }
 )();
 `;
-            const _config  = eslintConfig.getConfig();
-            if (_config.rules)
-            {
-                Object.assign(_config.rules, _eslint.rules);
-            }
+            const _config = eslintConfig.getConfig();
+            Object.assign(
+                _config.rules,
+                {
+                    'new-cap'        : [2, {newIsCapExceptionPattern : /^jf/}],
+                    'no-unused-vars' : [2, {vars : 'local'}]
+                },
+                _eslint.rules
+            );
             const _errors = eslint.verify(_wrapped, _config);
             if (_errors.length)
             {

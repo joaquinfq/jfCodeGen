@@ -77,7 +77,7 @@ module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase {
             const _names = Object.keys(_properties);
             if (_names.length)
             {
-                const _requires = this.file.requires.config;
+                const _requires = this.file.requires;
                 const _result   = {};
                 _names.sort().forEach(
                     name =>
@@ -103,9 +103,9 @@ module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase {
                                 }
                                 else
                                 {
-                                    if (_requires.indexOf(_type) === -1)
+                                    if (!_requires.getItem(_type))
                                     {
-                                        _requires.push(_type);
+                                        _requires.setItem(_type);
                                     }
                                     _type = this.camelize(_type);
                                 }
@@ -188,6 +188,6 @@ module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase {
      */
     _validateItem(item)
     {
-        return item.validate();
+        return this.getItem(item).validate();
     }
 };

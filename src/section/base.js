@@ -109,7 +109,7 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
         }
         else
         {
-            this.log('debug', '\n' + JSON.stringify(value, null, 4));
+            this.log('debug', '', '\n%s\n' + JSON.stringify(value, null, 4));
         }
     }
 
@@ -137,13 +137,16 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
      */
     getItem(name)
     {
-        return this.get(`config.${name}`);
+        return this.get(`config.${name.replace(/\./g, '\\.')}`);
     }
 
     /**
-     * Analiza los elementos de la clase.
+     * Itera sobre los valores de la configuración de la sección
+     * y ejecuta el callback especificado.
+     *
+     * @param {Function} callback Función a ejecutar para cada uno de los elementos.
      */
-    parse()
+    iterate(callback)
     {
         let _items = this.config;
         if (typeof _items === 'object')
@@ -152,8 +155,16 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
             {
                 _items = Object.keys(_items).sort();
             }
-            _items.forEach((item, index) => this._parseItem(item, index));
+            _items.forEach(callback);
         }
+    }
+
+    /**
+     * Analiza los elementos de la clase.
+     */
+    parse()
+    {
+        this.iterate((item, index) => this._parseItem(item, index));
     }
 
     /**
@@ -164,10 +175,8 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
      *
      * @protected
      */
-    _parseItem(name, index)
+    _parseItem(name, index) // eslint-disable-next-line no-unused-vars
     {
-        /* eslint no-unused-vars:[0] */
-        /* jslint unused:false */
     }
 
     /**
@@ -178,33 +187,29 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
      */
     setItem(name, value)
     {
-        if (value && !value.name && !Array.isArray(value))
+        if (value && typeof value === 'object' && !value.name && !Array.isArray(value))
         {
-            //noinspection JSUndefinedPropertyAssignment
             value.name = name;
         }
-        if (this._validateItem(value))
+        const _config = this.config;
+        if (Array.isArray(_config))
         {
-            const _item = this.config;
-            if (Array.isArray(_item))
+            if (typeof name === 'number')
             {
-                if (typeof name === 'number')
-                {
-                    _item[name] = value;
-                }
-                else if (value !== undefined && _item.indexOf(value) === -1)
-                {
-                    _item.push(value);
-                }
-                else if (_item.indexOf(name) === -1)
-                {
-                    _item.push(name);
-                }
+                _config[name] = value;
             }
-            else if (_item)
+            else if (value !== undefined && _config.indexOf(value) === -1)
             {
-                this.set(`config.${name}`, value);
+                _config.push(value);
             }
+            else if (_config.indexOf(name) === -1)
+            {
+                _config.push(name);
+            }
+        }
+        else if (_config)
+        {
+            this.set(`config.${name.replace(/\./g, '\\.')}`, value);
         }
     }
 
@@ -220,20 +225,37 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
             const _names = Object.keys(_config);
             if (_names.length)
             {
+                const _regexp = /^_+/;
                 _context = [];
                 _names
                     .sort(
                         (name1, name2) => name1
-                            .replace(/^_+/, '')
+                            .replace(_regexp, '')
                             .toLowerCase()
-                            .localeCompare(name2.replace(/^_+/, '').toLowerCase())
+                            .localeCompare(name2.replace(_regexp, '').toLowerCase())
                     )
                     .forEach(
-                        name => _context.push(
-                            JSON.parse(
-                                JSON.stringify(_config[name])
-                            )
-                        )
+                        name =>
+                        {
+                            const _value = _config[name];
+                            if (typeof _value === 'object')
+                            {
+                                _context.push(
+                                    JSON.parse(
+                                        JSON.stringify(_value)
+                                    )
+                                );
+                            }
+                            else
+                            {
+                                _context.push(
+                                    {
+                                        key   : name,
+                                        value : _value
+                                    }
+                                )
+                            }
+                        }
                     );
             }
             else
@@ -266,6 +288,15 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
             this.config = this._getDefault();
         }
     }
+
+    /**
+     * Valida los elementos de la configuración.
+     */
+    validate()
+    {
+        this.iterate((item, index) => this._validateItem(item, index));
+    }
+
 
     /**
      * Valida un elemento antes de agregarlo a la lista.
