@@ -7,7 +7,8 @@ const fs            = require('fs');
  * @class     jf.codegen.section.Base
  * @extends   jf.codegen.Base
  */
-module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
+module.exports = class jfCodeGenSectionBase extends jfCodeGenBase
+{
     /**
      * @override
      */
@@ -214,6 +215,25 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
     }
 
     /**
+     * Ordena las claves para que se genere el código en el orden correcto.
+     *
+     * @param {String} key1 Clave a comparar.
+     * @param {String} key2 Clave a comparar.
+     *
+     * @return {Number} Resultado de la comparación (-1, 0 ó 1).
+     *
+     * @protected
+     */
+    _sortKeys(key1, key2)
+    {
+        const _regexp = /^_+/;
+        return key1
+            .replace(_regexp, '')
+            .toLowerCase()
+            .localeCompare(key2.replace(_regexp, '').toLowerCase())
+    }
+
+    /**
      * @override
      */
     toJSON()
@@ -225,15 +245,9 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
             const _names = Object.keys(_config);
             if (_names.length)
             {
-                const _regexp = /^_+/;
-                _context = [];
+                _context      = [];
                 _names
-                    .sort(
-                        (name1, name2) => name1
-                            .replace(_regexp, '')
-                            .toLowerCase()
-                            .localeCompare(name2.replace(_regexp, '').toLowerCase())
-                    )
+                    .sort((k1, k2) => this._sortKeys(k1,k2))
                     .forEach(
                         name =>
                         {
@@ -296,7 +310,6 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase {
     {
         this.iterate((item, index) => this._validateItem(item, index));
     }
-
 
     /**
      * Valida un elemento antes de agregarlo a la lista.

@@ -10,7 +10,8 @@ const indent               = require('../tpl/helpers/indent');
  * @class     jf.codegen.section.Methods
  * @extends   jf.codegen.section.Base
  */
-module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase {
+module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase
+{
     /**
      * Agrega un método a la configuración de métodos.
      *
@@ -125,6 +126,20 @@ module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase {
             value.name = name;
         }
         super.setItem(name, new jfCodeGenMethod(value));
+    }
+
+    /**
+     * @override
+     */
+    _sortKeys(key1, key2)
+    {
+        // Por conveniencia, ponemos de primero a los constructores.
+        // El resto lo ordenamos alfabéticamente.
+        return key1 === 'constructor'
+            ? -1
+            : key2 === 'constructor'
+                   ? 1
+                   : super._sortKeys(key1, key2);
     }
 
     /**

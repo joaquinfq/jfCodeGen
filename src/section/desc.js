@@ -6,7 +6,8 @@ const jfCodeGenSectionBase = require('./base');
  * @class     jf.codegen.section.Desc
  * @extends   jf.codegen.section.Base
  */
-module.exports = class jfCodeGenSectionDesc extends jfCodeGenSectionBase {
+module.exports = class jfCodeGenSectionDesc extends jfCodeGenSectionBase
+{
     /**
      * @override
      */
@@ -15,6 +16,14 @@ module.exports = class jfCodeGenSectionDesc extends jfCodeGenSectionBase {
         super(file, config);
         this.defval   = '';
         this.required = true;
+    }
+
+    /**
+     * @override
+     */
+    _getDefault()
+    {
+        return [];
     }
 
     /**
@@ -55,6 +64,7 @@ module.exports = class jfCodeGenSectionDesc extends jfCodeGenSectionBase {
      */
     _validateConfig()
     {
+        super._validateConfig();
         let _config = this.config;
         if (Array.isArray(_config))
         {

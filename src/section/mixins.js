@@ -40,13 +40,26 @@ module.exports = class jfCodeGenSectionMixins extends jfCodeGenSectionBase {
     toJSON()
     {
         let _requires = this.config;
-        if (_requires && _requires.length)
+        if (_requires)
         {
-            const _file = this.file;
-            this.dump(_requires);
-            _requires = _requires
-                .sort((r1, r2) => r1.name.toLowerCase().localeCompare(r2.name.toLowerCase()))
-                .map(r => r.class.indexOf(_file.base) === -1);
+            if (Array.isArray(_requires))
+            {
+                if (_requires.length)
+                {
+                    const _file = this.file;
+                    _requires   = _requires
+                        .sort((r1, r2) => r1.name.toLowerCase().localeCompare(r2.name.toLowerCase()))
+                        .map(r => r.class.indexOf(_file.base) === -1);
+                }
+                else
+                {
+                    _requires = false;
+                }
+            }
+            else if (Object.keys(_requires).length === 0)
+            {
+                _requires = false;
+            }
         }
         return _requires;
     }
