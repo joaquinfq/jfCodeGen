@@ -1,0 +1,46 @@
+{{> header}}
+{{export}}class {{camelize namespace}}{{camelize class}}{{#if base}} extends {{camelize base}}{{/if}}
+{
+{{#if properties}}
+    /**
+     * @constructor
+     */
+    constructor()
+    {
+{{#if base}}
+        super(...arguments);
+{{/if}}
+{{> properties-es6}}
+    }
+{{/if}}
+
+{{#each properties}}
+  {{#if static}}
+    /**
+    {{#if desc}}
+      {{#each desc}}
+        {{#if this}}
+     * {{{tr this}}}
+        {{else}}
+     *
+        {{/if}}
+      {{/each}}
+     *
+    {{/if}}
+     * @property {{name}}
+    {{#if type}}
+     * @type     {{doc-type type}}
+    {{/if}}
+     *
+     {{scope name}}
+     * @final
+     * @static
+     */
+    static get {{name}}() {
+        return {{{indent this 4}}};
+    }
+  {{/if}}
+{{/each}}
+
+{{> methods-es6}}
+};

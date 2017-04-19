@@ -1,18 +1,3 @@
+{{assign "export" "module.exports = "}}
 {{> requires}}
-{{> header}}
-module.exports = class {{camelize namespace}}{{camelize class}}{{#if base}} extends {{camelize base}}{{/if}}
-{
-{{#if properties}}
-    /**
-     * @constructor
-     */
-    constructor()
-    {
-{{#if base}}
-        super(...arguments);
-{{/if}}
-{{> properties-es6}}
-    }
-{{/if}}
-{{> methods-es7}}
-};
+{{> class-es6}}

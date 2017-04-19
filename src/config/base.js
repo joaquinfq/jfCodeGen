@@ -1,12 +1,19 @@
 const jfCodeGenBase = require('../base');
 /**
+ * Longitud de la indentación a usar por defecto.
+ *
+ * @type {Number}
+ */
+let defaultIndent   = 8;
+/**
  * Clase base para las distintas configuraciones a usar en la aplicación.
  *
  * @namespace jf.codegen.config
  * @class     jf.codegen.config.Base
  * @extends   jf.codegen.Base
  */
-module.exports = class jfCodeGenConfigBase extends jfCodeGenBase {
+module.exports = class jfCodeGenConfigBase extends jfCodeGenBase
+{
     /**
      * @override
      */
@@ -122,6 +129,16 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase {
     }
 
     /**
+     * Asigna la longitud de la indentación por defecto.
+     *
+     * @param {Number} value Valor a asignar.
+     */
+    static set defaultIndent(value)
+    {
+        defaultIndent = value;
+    }
+
+    /**
      * Analiza una definición de tipo texto.
      * El texto entre paréntesis se usa para definir campos separados
      * entre sí usando `;` por defecto.
@@ -204,17 +221,18 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase {
     /**
      * Convierte un objeto a texto formateado e indentado.
      *
-     * @param {Object} value Objeto a formatear.
-     * @param {Number} size  Cantidad de espacios en blanco a agregar al inicio
-     *                       de cada línea para indentar las claves.
+     * @param {Object} value  Objeto a formatear.
+     * @param {Number} indent Cantidad de espacios en blanco a agregar al inicio
+     *                        de cada línea para indentar las claves.
      *
      * @return {String} Texto formateado e indentado.
      */
-    static stringify(value, size = 8)
+    static stringify(value, indent)
     {
         return JSON.stringify(value, null, 4)
             .replace(/"/gm, "'")
-            .replace(/^/gm, ' '.repeat(size))
+            .replace(/^/gm, ' '.repeat(indent || defaultIndent))
+            .replace(/:/g, ' :')
             .trim();
     }
 };

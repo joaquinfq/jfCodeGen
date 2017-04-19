@@ -1,12 +1,12 @@
 {
-    "version": "0.1.7",
-    "author": "Joaquín Fernández",
-    "name": "jf-code-gen",
-    "description": "Code generator using templates for any programming language or framework.",
-    "bugs": {
-        "url": "https://github.com/joaquinfq/jfCodeGen"
+    "version"      : "0.2.0",
+    "author"       : "Joaquín Fernández",
+    "name"         : "jf-code-gen",
+    "description"  : "Code generator using templates for any programming language or framework.",
+    "bugs"         : {
+        "url" : "https://github.com/joaquinfq/jfCodeGen"
     },
-    "keywords": [
+    "keywords"     : [
         "code",
         "generator",
         "source",
@@ -14,21 +14,21 @@
         "template",
         "templates"
     ],
-    "license": "MIT",
-    "homepage": "http://www.joaquinfernandez.net",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/joaquinfq/jfCodeGen"
+    "license"      : "MIT",
+    "homepage"     : "http://www.joaquinfernandez.net",
+    "repository"   : {
+        "type" : "git",
+        "url"  : "https://github.com/joaquinfq/jfCodeGen"
     },
-    "dependencies": {
-        "augment-object": "^0.1.1",
-        "camelcase": "^4.0.0",
-        "decamelize": "^1.2.0",
-        "eslint": "^3.19.0",
-        "handlebars": "~2.0.0",
-        "jf-file-system": "^0.1.3",
-        "jf-logger": "^0.1.6",
-        "js-beautify": "^1.5.10",
-        "yamljs": "~0.2.1"
+    "dependencies" : {
+        "augment-object" : "^0.1.1",
+        "camelcase"      : "^4.0.0",
+        "decamelize"     : "^1.2.0",
+        "eslint"         : "^3.19.0",
+        "handlebars"     : "~2.0.0",
+        "jf-file-system" : "^0.1.3",
+        "jf-logger"      : "^0.1.6",
+        "js-beautify"    : "^1.5.10",
+        "yamljs"         : "~0.2.1"
     }
 }

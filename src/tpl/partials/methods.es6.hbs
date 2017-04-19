@@ -1,10 +1,10 @@
-{{#each properties}}
+{{#each methods}}
   {{#unless static}}
-{{>property-es7}}
+{{> method-es6}}
   {{/unless}}
 {{/each}}
-{{#each properties}}
+{{#each methods}}
   {{#if static}}
-{{>property-es7}}
+{{> method-es6}}
   {{/if}}
 {{/each}}

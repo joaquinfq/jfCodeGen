@@ -117,6 +117,13 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
          * @type    {String}
          */
         this.super = '';
+        /**
+         * Indica si el método es estático.
+         *
+         * @property static
+         * @type     {Boolean}
+         */
+        this.static = false;
         //---------------------------------------------------------------------
         this.setProperties(config);
         this._parseParams();

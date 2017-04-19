@@ -1,27 +1,29 @@
 {{#each properties}}
+  {{#unless static}}
         /**
-      {{#if desc}}
-        {{#each desc}}
-          {{#if this}}
+    {{#if desc}}
+      {{#each desc}}
+        {{#if this}}
          * {{{tr this}}}
-          {{else}}
+        {{else}}
          *
-          {{/if}}
-        {{/each}}
-        {{#if override}}
-         * {{{tr "Propiedad heredada de `%s`." @root/base}}}
         {{/if}}
+      {{/each}}
+      {{#if override}}
+         * {{{tr "Propiedad heredada de `%s`." @root/base}}}
+      {{/if}}
          *
-      {{/if}}
+    {{/if}}
          * @property {{name}}
-      {{#if type}}
+    {{#if type}}
          * @type     {{doc-type type}}
-      {{/if}}
+    {{/if}}
          *
          {{scope name}}
-      {{#if readonly}}
+    {{#if readonly}}
          * @final
-      {{/if}}
+    {{/if}}
          */
         this.{{name}} = {{{indent this 4}}};
+  {{/unless}}
 {{/each}}

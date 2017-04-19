@@ -30,14 +30,6 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase
          */
         this.file = file;
         /**
-         * Cantidad de espacios en blanco a usar para indentar los objetos
-         * usando el método `stringify`.
-         *
-         * @property indentSize
-         * @type     {Number}
-         */
-        this.indentSize = file.tpl.indexOf('.node.') === -1 ? 4 : 8;
-        /**
          * Nombre de la sección.
          * Debe coincidir con el nombre de la clave en el archivo YAML leído.
          * Si no se especifica se construye a partir del nombre del archivo.
@@ -138,7 +130,11 @@ module.exports = class jfCodeGenSectionBase extends jfCodeGenBase
      */
     getItem(name)
     {
-        return this.get(`config.${name.replace(/\./g, '\\.')}`);
+        if (typeof name === 'string')
+        {
+            name = name.replace(/\./g, '\\.');
+        }
+        return this.get(`config.${name}`);
     }
 
     /**

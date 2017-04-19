@@ -6,7 +6,8 @@ const jfCodeGenConfigBase = require('./base');
  * @class     jf.codegen.config.Property
  * @extends   jf.codegen.config.Base
  */
-module.exports = class jfCodeGenConfigProperty extends jfCodeGenConfigBase {
+module.exports = class jfCodeGenConfigProperty extends jfCodeGenConfigBase
+{
     /**
      * @override
      */
@@ -19,7 +20,8 @@ module.exports = class jfCodeGenConfigProperty extends jfCodeGenConfigBase {
                 desc     : _def[0],
                 type     : _def[1],
                 value    : _def[2],
-                readonly : _def[3] === 'true'
+                readonly : _def[3] === 'true',
+                static   : _def[4] === 'true'
             }
         }
         super(config);
@@ -54,6 +56,13 @@ module.exports = class jfCodeGenConfigProperty extends jfCodeGenConfigBase {
          */
         this.readonly = false;
         /**
+         * Indica si la propiedad es estática.
+         *
+         * @property static
+         * @type     {Boolean}
+         */
+        this.static = false;
+        /**
          * Tipo de datos que maneja el objeto o clase a generar.
          *
          * @property type
@@ -66,10 +75,24 @@ module.exports = class jfCodeGenConfigProperty extends jfCodeGenConfigBase {
          * @property value
          * @type     {String|null}
          */
-        this.value = "null";
+        this.value = 'null';
         //---------------------------------------------------------------------
         this.setProperties(config);
-        this.type = this.constructor.getType(this.type);
+        const _value  = this.value;
+        const _typeof = typeof _value;
+        if (_typeof === 'object')
+        {
+            if (_value === null)
+            {
+                this.value = 'null';
+            }
+            else
+            {
+                this.rawval = true;
+                this.value  = this.constructor.stringify(_value);
+            }
+        }
+        this.type = this.constructor.getType(this.type || _typeof);
     }
 
     /**

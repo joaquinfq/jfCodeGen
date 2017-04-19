@@ -148,7 +148,7 @@ module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase
     _validateItem(item)
     {
         item         = this.getItem(item);
-        item.globals = this.get('file.requires.config');
+        item.globals = Object.values(this.get('file.requires.config'));
         return item.eslint === false
             ? true
             : item.validate();

@@ -7,7 +7,8 @@ const jfCodeGenProperty    = require('../config/property');
  * @class     jf.codegen.section.Properties
  * @extends   jf.codegen.section.Base
  */
-module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase {
+module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase
+{
     /**
      * Agrega una propiedad final, es decir, que no puede ser
      * modificada por las instancias.
@@ -116,18 +117,15 @@ module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase {
                 );
                 if (Object.keys(_result).length)
                 {
-                    this.addProperty(
+                    const _prop = this.addProperty(
                         {
                             desc     : this.tr('Tipos de datos de las propiedades de la clase.').split('\n'),
                             name     : name,
-                            rawval   : true,
                             override : true,
-                            type     : 'object',
-                            value    : jfCodeGenProperty.stringify(_result, this.indentSize)
-                                .replace(/\'/g, '')
-                                .replace(/:/g, ' :')
+                            value    : _result
                         }
                     );
+                    _prop.value = _prop.value.replace(/\'/g, '')
                 }
             }
         }

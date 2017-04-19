@@ -153,6 +153,7 @@ class jfCodeGenConfigFile extends jfCodeGenConfigBase {
             {
                 this.emit('config', config);
                 this.setProperties(config);
+                this.constructor.defaultIndent = this.tpl.indexOf('.es7.') === -1 ? 8 : 4;
                 // Asignamos las propiedades que corresponden con las secciones.
                 this.__loadSections(config);
                 this.class = this.camelize(this.class);
@@ -176,7 +177,7 @@ class jfCodeGenConfigFile extends jfCodeGenConfigBase {
         this.emit('after-context', this, _context);
         const _tpl = new jfCodeGenTpl(this);
         this.emit('before-render', this, _tpl);
-        const _code = _tpl.render(_context);
+        const _code = _tpl.render(_context).trim() + '\n';
         this.emit('after-render', this, _tpl, _code);
         // Verificamos si tiene extensión el archivo.
         let _outfile = this.outfile;
@@ -187,12 +188,13 @@ class jfCodeGenConfigFile extends jfCodeGenConfigBase {
             {
                 switch (_tpl[1])
                 {
-                    case 'es7':
-                        _outfile += '.es7';
-                        break;
+                    case 'es6':
                     case 'js':
                     case 'node':
                         _outfile += '.js';
+                        break;
+                    case 'es7':
+                        _outfile += '.mjs';
                         break;
                     case 'php':
                         _outfile += '.php';

@@ -26,12 +26,20 @@ module.exports = class jfCodeGenSectionMixins extends jfCodeGenSectionBase {
         }
         else
         {
-            const _name = this.getItem(item);
-            if (!_name)
-            {
-                this.setItem(item, this.camelize(item));
-            }
+            this.setItem(item, this.getItem(item));
         }
+    }
+
+    /**
+     * @override
+     */
+    setItem(name, item)
+    {
+        if (!item)
+        {
+            item = this.camelize(name);
+        }
+        super.setItem(name, item);
     }
 
     /**
