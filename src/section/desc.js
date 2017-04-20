@@ -14,7 +14,6 @@ module.exports = class jfCodeGenSectionDesc extends jfCodeGenSectionBase
     constructor(file, config)
     {
         super(file, config);
-        this.defval   = '';
         this.required = true;
     }
 

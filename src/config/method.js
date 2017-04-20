@@ -44,7 +44,8 @@ const beautifyConfig          = {
  * @class     jf.codegen.config.Method
  * @extends   jf.codegen.config.Base
  */
-module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
+module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase
+{
     constructor(config)
     {
         super(config);
@@ -173,13 +174,7 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase {
             {
                 if (typeof _param === 'string')
                 {
-                    const _def = jfCodeGenConfigBase.parseDefinition(_param);
-                    _param     = {
-                        desc   : _def[0],
-                        type   : _def[1],
-                        defval : _def[2],
-                        name   : _def[3]
-                    };
+                    _param = jfCodeGenConfigBase.parseDefinition(_param, ['desc', 'type', 'value', 'name']);
                 }
                 _param = new jfCodeGenConfigProperty(_param);
                 _names.push(_param.name);
@@ -235,7 +230,7 @@ ${_globals}
 }
 )();
 `;
-            const _config = eslintConfig.getConfig();
+            const _config  = eslintConfig.getConfig();
             Object.assign(
                 _config.rules,
                 {

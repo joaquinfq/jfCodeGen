@@ -1,8 +1,6 @@
 const jfCodeGenSectionBase = require('./base');
 const jfCodeGenMethod      = require('../config/method');
-const format               = require('util').format;
 const path                 = require('path');
-const indent               = require('../tpl/helpers/indent');
 /**
  * Clase para configurar los métodos a generar.
  *
@@ -39,60 +37,6 @@ module.exports = class jfCodeGenSectionMethods extends jfCodeGenSectionBase
                 returns  : 'String'
             }
         );
-    }
-
-    /**
-     * Verifica si es necesario agregar el método <em>_beforeInit</em> para inicializar las variables
-     * que se pasan por referencias como los arrays y objetos.
-     *
-     * En caso de ser necesario lo agrega.
-     *
-     * @private
-     */
-    __checkBeforeInit()
-    {
-        const _init = this.defval;
-        if (_init && typeof _init === 'object')
-        {
-            const _lines  = [];
-            const _format = 'this._initProperty(\'%s\', %s);';
-            const _indent = this.indent + '    ';
-            Object.keys(_init).sort().forEach(
-                (property) =>
-                {
-                    _lines.push(
-                        format(
-                            _format,
-                            property,
-                            indent(
-                                {
-                                    value : _init[property]
-                                },
-                                _indent.length
-                            )
-                        )
-                    );
-                }
-            );
-            if (_lines.length)
-            {
-                this.setItem(
-                    '_initProperties',
-                    {
-                        body   : _lines.join('\n' + _indent),
-                        desc   : [
-                            'Inicializa las propiedades del modelo que corresponden con objetos.',
-                            'Las propiedades que representan objetos al ser pasadas por referencia',
-                            'al crear la instancia del modelo se inicializan acá para evitar la',
-                            'modificación inesperada por el uso de su referencia.'
-                        ],
-                        format : false,
-                        super  : 'after'
-                    }
-                );
-                this._parseItem('_initProperties');
-            }
-        }
     }
 
     /**

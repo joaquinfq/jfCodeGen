@@ -9,43 +9,6 @@ const jfCodeGenProperty    = require('../config/property');
  */
 module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase
 {
-    /**
-     * Agrega una propiedad final, es decir, que no puede ser
-     * modificada por las instancias.
-     *
-     * @param {Object} config Configuración a usar para construir la propiedad.
-     */
-    addFinalProperty(config)
-    {
-        if (config.override)
-        {
-            if (!Array.isArray(config.desc))
-            {
-                config.desc = [];
-            }
-        }
-        const _value = config.value;
-        const _type  = typeof _value;
-        if (_type === 'object')
-        {
-            let _json = JSON.stringify(_value, null, 4);
-            if (Array.isArray(_value) && String(_value[0]).indexOf(this.camelize(this.project)) === 0)
-            {
-                _json = _json.replace(/"/g, '');
-            }
-            else
-            {
-                _json = _json.replace(/"/g, "'");
-            }
-            config.value = _json.replace(/^/gm, '    ').trim();
-        }
-        if (!config.type)
-        {
-            config.type = _type;
-        }
-        return this.addProperty(config);
-    }
-
     addProperty(config)
     {
         const _property = new jfCodeGenProperty(
@@ -86,14 +49,12 @@ module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase
                         const _property = _properties[name];
                         if (!_property.readonly)
                         {
-                            let _type = jfCodeGenProperty.getType(_property.type);
+                            let _type = _property.type;
                             if (_type)
                             {
-                                const _isArray = _type.indexOf('[]') !== -1;
-                                if (_isArray)
-                                {
-                                    _type = _type.replace('[]', '');
-                                }
+                                _type = _type
+                                    .replace('[]', '')
+                                    .replace('|null', '');
                                 if (_type.indexOf('.') === -1)
                                 {
                                     const _nativeType = this.camelize(_type);
@@ -132,27 +93,6 @@ module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase
     }
 
     /**
-     * Agrega el campo a las propiedades a inicializar en el <em>_beforeInit</em>.
-     *
-     * @param {String} name Nombre del campo.
-     *
-     * @private
-     */
-    __addToInit(name)
-    {
-        const _property = this.getItem(name);
-        if (_property && _property.defval)
-        {
-            const config = this.file;
-            if (!config.defval)
-            {
-                config.defval = {};
-            }
-            config.defval[name] = _property.defval;
-        }
-    }
-
-    /**
      * @override
      */
     _getDefault()
@@ -170,15 +110,6 @@ module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase
             name,
             new jfCodeGenProperty(this.getItem(name))
         );
-    }
-
-    /**
-     * @override
-     */
-    setItem(name, value)
-    {
-        super.setItem(name, value);
-        this.__addToInit(name);
     }
 
     /**

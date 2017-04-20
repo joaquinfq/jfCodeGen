@@ -117,7 +117,7 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase
         let _isValid = true;
         if (!Array.isArray(this.desc))
         {
-            this.error('La descripción debe %s debe ser un array en vez de %s.', this.name, typeof this.desc);
+            this.error('La descripción de %s debe ser un array en vez de %s.', this.name, typeof this.desc);
             _isValid = false;
         }
         else if (this.desc.join('\n').length < this.minDescLength)
@@ -150,20 +150,22 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase
      * ```
      *
      * @param {String} definition Definición a analizar.
+     * @param {Array}  fields     Campos que deberían obtenerse al analizar la definición.
      * @param {String} separator  Separador usado entre campos.
-     * @return {String[]}
+     *
+     * @return {Object} Configuración construida de la definición.
      */
-    static parseDefinition(definition, separator = ';')
+    static parseDefinition(definition, fields, separator = ';')
     {
-        const _first = definition.lastIndexOf('(');
-        let _result;
+        const _first  = definition.lastIndexOf('(');
+        const _result = [];
         if (_first === -1)
         {
-            _result = [definition];
+            _result.push(definition);
         }
         else
         {
-            const _last = definition.lastIndexOf(')');
+            const _last = definition.indexOf(')', _first);
             if (_last === -1)
             {
                 jfCodeGenBase.i().error('Falta el `)` de cierre en la definición: %s', definition);
@@ -171,17 +173,38 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase
             else
             {
                 let _desc = definition.substring(0, _first).trim();
-                if (_desc[_desc.length - 1] !== '.')
+                if (fields[0] === 'desc')
                 {
-                    _desc += '.';
+                    if (_desc[_desc.length - 1] !== '.')
+                    {
+                        _desc += '.';
+                    }
+                    _result.push(_desc);
                 }
-                _result = [
-                    _desc,
-                    ...definition.substring(_first + 1, _last).split(separator)
-                ];
+                _result.push(...definition.substring(_first + 1, _last).split(separator));
             }
         }
-        return _result;
+        const _fields = {};
+        _result.every(
+            (value, index) =>
+            {
+                let _field = fields[index];
+                if (value && _field)
+                {
+                    if (!Array.isArray(_field))
+                    {
+                        _field = [_field, 'string'];
+                    }
+                    if (_field[1] === 'boolean')
+                    {
+                        value = ['1', 'true', 'on'].indexOf(value.trim()) !== -1;
+                    }
+                    _fields[_field[0]] = value;
+                }
+                return !!_field;
+            }
+        );
+        return _fields;
     }
 
     /**
@@ -210,6 +233,14 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase
                 case 'number':
                 case 'real':
                     type = 'Number';
+                    break;
+                case 'date':
+                case 'date-only':
+                case 'date-time':
+                case 'time':
+                case 'time-only':
+                case 'timestamp':
+                    type = 'Date';
                     break;
                 default:
                     type = type[0].toUpperCase() + type.substr(1);
