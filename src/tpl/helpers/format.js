@@ -30,6 +30,9 @@ module.exports = function (property)
             case 'string':
                 _result = "'" + _value.replace(/'/g, "\\'") + "'";
                 break;
+            default:
+                _result = _value;
+                break;
         }
     }
     return _result;
