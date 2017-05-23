@@ -102,7 +102,7 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase
      */
     dump()
     {
-        console.debug(JSON.stringify(this, null, 4));
+        console.log(JSON.stringify(this, null, 4));
     }
 
     /**

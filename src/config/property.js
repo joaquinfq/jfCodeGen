@@ -135,7 +135,7 @@ module.exports = class jfCodeGenConfigProperty extends jfCodeGenConfigBase
                     else
                     {
                         this.rawval = true;
-                        this.value  = _value === undefined
+                        this.value  = _value === undefined || _value === 'null'
                             ? null
                             : this.constructor.stringify(_value);
                     }

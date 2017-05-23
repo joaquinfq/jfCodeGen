@@ -13,7 +13,7 @@ module.exports = function (property)
     {
         _result = _value;
     }
-    else if (_value === null)
+    else if (_value === null || _value === 'null')
     {
         _result = 'null';
     }
