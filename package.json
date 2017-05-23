@@ -1,5 +1,5 @@
 {
-    "version": "0.2.3",
+    "version": "0.2.4",
     "author": "Joaquín Fernández",
     "name": "jf-code-gen",
     "description": "Code generator using templates for any programming language or framework.",
