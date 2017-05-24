@@ -52,6 +52,7 @@ module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase
                             let _type = _property.type;
                             if (_type)
                             {
+                                const _isArray = _type.indexOf('[]') !== -1;
                                 _type = _type
                                     .replace('[]', '')
                                     .replace('|null', '');
@@ -71,7 +72,9 @@ module.exports = class jfCodeGenSectionProperties extends jfCodeGenSectionBase
                                     }
                                     _type = this.camelize(_type);
                                 }
-                                _result[name] = _type;
+                                _result[name] = _isArray
+                                    ? [ _type ]
+                                    : _type;
                             }
                         }
                     }
