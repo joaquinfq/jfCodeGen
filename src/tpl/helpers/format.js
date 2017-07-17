@@ -17,6 +17,10 @@ module.exports = function (property)
     {
         _result = 'null';
     }
+    else if (_value === '{}' && property.type === 'Object')
+    {
+        // Evitamos las dobles comillas del switch.
+    }
     else
     {
         switch (typeof _value)

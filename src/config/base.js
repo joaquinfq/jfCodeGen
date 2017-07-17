@@ -204,6 +204,24 @@ module.exports = class jfCodeGenConfigBase extends jfCodeGenBase
                 return !!_field;
             }
         );
+        const _value = _fields.value;
+        if (typeof _value === 'string')
+        {
+            const _type = _fields.type.toLowerCase();
+            if (_type === 'boolean')
+            {
+                _fields.value = ['1', 'true', 'on'].indexOf(_value) !== -1;
+            }
+            else if (_value[0] === '{' && _type === 'object')
+            {
+                _fields.value = JSON.parse(_value);
+            }
+            else if (_value[0] === '[' && _type === 'array')
+            {
+                _fields.value = JSON.parse(_value);
+            }
+        }
+
         return _fields;
     }
 
