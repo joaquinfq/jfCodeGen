@@ -59,7 +59,7 @@ module.exports = class jfCodeGenTpl extends jfCodeGenBase {
         dir = path.join(dir, 'helpers');
         if (fs.exists(dir))
         {
-            fs.scandir(dir).forEach(
+            fs.scandir(dir, /\.js$/).forEach(
                 (filename) =>
                 {
                     const _name = path.basename(filename, '.js');

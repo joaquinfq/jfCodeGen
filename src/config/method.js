@@ -74,6 +74,13 @@ module.exports = class jfCodeGenConfigMethod extends jfCodeGenConfigBase
          */
         this.format = false;
         /**
+         * Indica si el método es un `getter` de una propiedad.
+         *
+         * @property getter
+         * @type     {Boolean}
+         */
+        this.getter = false;
+        /**
          * Variables globales a usar cuando se valide el código.
          *
          * @property globals

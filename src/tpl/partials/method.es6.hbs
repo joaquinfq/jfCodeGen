@@ -27,7 +27,7 @@
      * @static
 {{/if}}
      */
-    {{#if static}}static {{/if}}{{name}}({{#each params}}{{name}}{{#unless @last}}, {{/unless}}{{/each}})
+    {{#if static}}static {{/if}}{{#if getter}}get {{/if}}{{name}}({{#each params}}{{name}}{{#unless @last}}, {{/unless}}{{/each}})
     {
 {{#if before}}
         super.{{name}}({{#each params}}{{name}}{{#unless @last}}, {{/unless}}{{/each}});
