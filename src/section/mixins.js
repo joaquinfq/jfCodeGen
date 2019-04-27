@@ -20,7 +20,7 @@ module.exports = class jfCodeGenSectionMixins extends jfCodeGenSectionBase {
      */
     _parseItem(item)
     {
-        if (item.indexOf('.') === -1)
+        if (item.indexOf('.') === -1 && !this.file.modules[item])
         {
             delete this.config[item];
         }

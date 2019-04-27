@@ -1,31 +1,42 @@
     /**
 {{#if desc}}
-  {{#each desc}}
+    {{#each desc}}
      * {{{tr this}}}
-  {{/each}}
+    {{/each}}
 {{/if}}
-{{#if override}}
+{{#if getter}}
+    {{#if override}}
+     *
+     * @override
+    {{/if}}
+     *
+     * @property {{name}}
+     * @type     {{{return}}}
+{{/if}}
+{{#unless getter}}
+    {{#if override}}
      * {{{tr "Método heredado de `%s`." @root/base}}}
      *
      * @override
-{{/if}}
+    {{/if}}
      *
      * @method {{name}}
-{{#if params}}
+    {{#if params}}
      *
-  {{#each params}}
+        {{#each params}}
      * @param {{doc-type typePad}} {{namePad}} {{{desc}}}
-  {{/each}}
-{{/if}}
-{{#if return}}
+        {{/each}}
+    {{/if}}
+    {{#if return}}
      *
      * @return {{{return}}}
-{{/if}}
+    {{/if}}
+{{/unless}}
      *
-     {{scope name}}
 {{#if static}}
      * @static
 {{/if}}
+     {{scope name}}
      */
     {{#if static}}static {{/if}}{{#if getter}}get {{/if}}{{name}}({{#each params}}{{name}}{{#unless @last}}, {{/unless}}{{/each}})
     {
@@ -34,10 +45,10 @@
 {{/if}}
         {{{body}}}
 {{#if after}}
-  {{#if return}}
+    {{#if return}}
         return super.{{name}}({{#each params}}{{name}}{{#unless @last}}, {{/unless}}{{/each}});
-  {{else}}
+    {{else}}
         super.{{name}}({{#each params}}{{name}}{{#unless @last}}, {{/unless}}{{/each}});
-  {{/if}}
+    {{/if}}
 {{/if}}
     }
