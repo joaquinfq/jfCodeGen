@@ -368,7 +368,7 @@ class jfCodeGenConfigFile extends jfCodeGenConfigBase {
         return value;
     }
 }
-require('augment-object').augmentClass(jfCodeGenConfigFile, require('jf-file-system'));
+require('augment-object').augmentClass(jfCodeGenConfigFile, require('@jf/fs'));
 //------------------------------------------------------------------------------
 // Exportamos la clase
 //------------------------------------------------------------------------------

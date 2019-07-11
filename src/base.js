@@ -1,5 +1,5 @@
 const camelize = require('./tpl/helpers/camelize');
-const jfLogger = require('jf-logger');
+const jfLogger = require('@jf/logger');
 /**
  * Clase base para el resto de clases del generador de código..
  *

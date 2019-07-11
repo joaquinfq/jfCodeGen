@@ -1,5 +1,5 @@
 const jfCodeGenBase = require('./base');
-const fs            = require('jf-file-system').i();
+const fs            = require('@jf/fs').i();
 const hbs           = require('handlebars');
 const path          = require('path');
 /**
