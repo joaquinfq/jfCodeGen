@@ -1,5 +1,5 @@
 {
-    "version": "0.2.9",
+    "version": "0.2.10",
     "author": "Joaquín Fernández",
     "name": "jf-code-gen",
     "description": "Code generator using templates for any programming language or framework.",
@@ -24,11 +24,10 @@
         "@jf/fs": "^3.0.1",
         "@jf/logger": "^2.0.0",
         "augment-object": "^0.1.1",
-        "camelcase": "^4.0.0",
-        "decamelize": "^1.2.0",
-        "eslint": "^3.19.0",
-        "handlebars": "~4.1.2",
+        "camelcase": "^5.3.1",
+        "decamelize": "^3.2.0",
+        "handlebars": "^4.1.2",
         "js-beautify": "^1.5.10",
-        "yamljs": "~0.2.1"
+        "yamljs": "^0.3.0"
     }
 }
